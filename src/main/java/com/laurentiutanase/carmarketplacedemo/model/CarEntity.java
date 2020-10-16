@@ -1,5 +1,6 @@
 package com.laurentiutanase.carmarketplacedemo.model;
 
+import com.laurentiutanase.carmarketplacedemo.openapi.model.Car;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -31,12 +32,12 @@ public class CarEntity {
     private Integer year;
 
     @Column(nullable = false)
-    private String price;
+    private Integer price;
 
     @Column(nullable = false)
     private String color;
 
     @Column(nullable = false)
-    private FuelTypeEnum fuelType;
+    private Car.FuelTypeEnum fuelType;
 
 }

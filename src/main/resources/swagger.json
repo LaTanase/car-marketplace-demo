@@ -1,0 +1,262 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a car marketplace application that can create and get advertisements.",
+    "version": "1.0-SNAPSHOT",
+    "title": "Car Marketplace Application"
+  },
+  "basePath": "/v1",
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/advertisement": {
+      "post": {
+        "summary": "Create an advertisement and insert it to the database.",
+        "description": "This request will add an advertisement to the database.",
+        "operationId": "createAdvertisement",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Advertisement entity to be created.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Advertisement"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref":"#/definitions/Advertisement"
+            }
+          },
+          "400": {
+            "description": "Invalid body supplied",
+            "schema": {
+              "$ref": "#/definitions/BadRequest400"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/NotFound404"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError500"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Advertisement": {
+      "type": "object",
+      "required": [
+        "title",
+        "description",
+        "publisher",
+        "car"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The identifier of the advertisement. Random generated UUID."
+        },
+        "title" : {
+          "type": "string",
+          "description": "The title of the advertisement"
+        },
+        "description": {
+          "type": "string",
+          "description": "The description of the advertisement"
+        },
+        "publisher": {
+          "type": "object",
+          "description": "The publisher of the advertisement",
+          "$ref": "#/definitions/User"
+        },
+        "car": {
+          "type": "object",
+          "description": "The car from the advertisement",
+          "$ref": "#/definitions/Car"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "required": [
+        "name",
+        "phoneNumber",
+        "email"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The identifier of the user. Random generated UUID."
+        },
+        "name" : {
+          "type": "string",
+          "description": "The name of the user"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the user"
+        },
+        "email": {
+          "type": "string",
+          "description": "The phone number of the user"
+        }
+      }
+    },
+    "Car": {
+      "type": "object",
+      "required": [
+        "make",
+        "model",
+        "year",
+        "price",
+        "color",
+        "fuel_type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "The identifier of the car. Random generated UUID."
+        },
+        "make" : {
+          "type": "string",
+          "description": "The make of the car"
+        },
+        "model": {
+          "type": "string",
+          "description": "The model of the car"
+        },
+        "year": {
+          "type": "integer",
+          "description": "The fabrication year of the car"
+        },
+        "price": {
+          "type": "integer",
+          "description": "The the sell price of the car"
+        },
+        "color": {
+          "type": "string",
+          "description": "The color of the car"
+        },
+        "fuel_type": {
+          "type": "string",
+          "enum": ["Diesel", "Petrol", "Electric"],
+          "description": "The fuel type of the car."
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "required": ["title"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "maxLength": 512,
+          "example": "The request is invalid",
+          "description": "A short human-readable summary of the problem type."
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32",
+          "example": "400",
+          "description": "The HTTP status code generated by the origin server for this occurrence of the problem."
+        },
+        "detail": {
+          "type": "string",
+          "maxLength": 512,
+          "example": "The advertisement does not exists.",
+          "description": "A human readable explanation specific to this occurrence of the problem."
+        }
+      },
+      "description": "'This general error structure is used throughout the common service APIs that comply with RFC7807. Note that unrecognized parameters must be ignored.'"
+    },
+    "BadRequest400": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Error"
+        }
+      ],
+      "description": "Bad request. Validation failure. Client error.",
+      "example": {
+        "title": "The request is invalid",
+        "status": "400",
+        "detail": "The request has failed validation."
+      }
+    },
+    "Unauthorized401": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Error"
+        }
+      ],
+      "description": "Unauthorized",
+      "example": {
+        "title": "Authentication failure",
+        "status": "401",
+        "detail": "The user is not authenticated to perform the request."
+      }
+    },
+    "NotFound404": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Error"
+        }
+      ],
+      "description": "Resource is not available",
+      "example": {
+        "title": "Resource is not available",
+        "status": "404",
+        "detail": "The resource requested could not be found."
+      }
+    },
+    "InternalServerError500": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Error"
+        }
+      ],
+      "description": "Server's fault",
+      "example": {
+        "title": "Server has encountered an error",
+        "status": "500",
+        "detail": "Server has encountered an error and cannot respond to the request."
+      }
+    },
+    "AdvertisementResponse" : {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "integer"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Advertisement"
+          }
+        }
+      }
+    }
+  }
+}
